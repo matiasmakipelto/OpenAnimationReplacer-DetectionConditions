@@ -57,7 +57,7 @@ target("OpenAnimationReplacer-DetectionPlugin")
                 end
             end
         end
-        copy("D:/Downloads/Skyrim/Own mods/", "OAR DetectionConditions")
-        copy("D:/Downloads/Skyrim/Mod Organizer 2/mods/", "OpenAnimationReplacer - Detection conditions")
+        copy("D:/Downloads/Skyrim/Own mods/", "OAR DetectionPlugin")
+        copy("D:/Downloads/Skyrim/Mod Organizer 2/mods/", "OpenAnimationReplacer - Detection plugin")
     end)
 

@@ -8,8 +8,8 @@ This is a SKSE64 plugin example utilizing Open Animation Replacer's API to add a
 
 ## Getting Started
 ```bat
-git clone https://github.com/ersh1/OpenAnimationReplacer-ExamplePlugin
-cd OpenAnimationReplacer-ExamplePlugin
+git clone git@github.com:matiasmakipelto/OpenAnimationReplacer-DetectionConditions.git
+cd OpenAnimationReplacer-DetectionConditions
 ```
 
 ### Build
@@ -20,14 +20,8 @@ xmake build
 
 > ***Note:*** *This will generate a `build/windows/` directory in the **project's root directory** with the build output.*
 
-### Build Output (Optional)
-If you want to redirect the build output, set one of or both of the following environment variables:
-
-- Path(s) to a Skyrim install folder: `SKYRIM_PATH`
-
-- Path(s) to a Mod Manager mods folder: `SKYRIM_MODS_PATH`
-
-> ***Note:*** *Both variables support semicolon (`;`) seperated paths for multiple game installs or `mods` folders.*
+### Build Output
+Change the folders where to copy the build from xmake.lua file:
 
 ### Project Generation (Optional)
 If you want to generate a Visual Studio project, run the following command:
