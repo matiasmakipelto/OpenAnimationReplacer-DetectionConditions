@@ -9,7 +9,7 @@
                 commit = "a723eaef7144dcd2eec359a171629c82a631882d",
                 url = "https://github.com/xmake-io/xmake-repo.git"
             },
-            version = "3.25.2"
+            version = "3.28.0-rc4"
         },
         ["commonlibsse-ng#dc79ba23"] = {
             repo = {
@@ -22,7 +22,7 @@
         ["fmt#31fecfc4"] = {
             repo = {
                 branch = "master",
-                commit = "2a40e4b0e57fa3231195238ed984000a8100aa70",
+                commit = "a723eaef7144dcd2eec359a171629c82a631882d",
                 url = "https://github.com/xmake-io/xmake-repo.git"
             },
             version = "10.0.0"
@@ -30,7 +30,7 @@
         ["rapidcsv#31fecfc4"] = {
             repo = {
                 branch = "master",
-                commit = "2a40e4b0e57fa3231195238ed984000a8100aa70",
+                commit = "a723eaef7144dcd2eec359a171629c82a631882d",
                 url = "https://github.com/xmake-io/xmake-repo.git"
             },
             version = "8.50"
@@ -38,7 +38,7 @@
         ["spdlog#b06e1130"] = {
             repo = {
                 branch = "master",
-                commit = "2a40e4b0e57fa3231195238ed984000a8100aa70",
+                commit = "a723eaef7144dcd2eec359a171629c82a631882d",
                 url = "https://github.com/xmake-io/xmake-repo.git"
             },
             version = "v1.11.0"

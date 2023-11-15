@@ -1,62 +1,37 @@
 #pragma once
 #include "API/OpenAnimationReplacerAPI-Conditions.h"
+#include "API/OpenAnimationReplacer-ConditionTypes.h"
 
 namespace Conditions
 {
-	// The bare minimum
-	class ExampleCondition : public CustomCondition
+	class IsDetectedByCondition : public CustomCondition
 	{
 	public:
-		constexpr static inline std::string_view CONDITION_NAME = "ExampleCondition"sv;
-
+		// Mandatory stuff
+		constexpr static inline std::string_view CONDITION_NAME = "IsDetectedBy"sv;
 		RE::BSString GetName() const override { return CONDITION_NAME.data(); }
-		RE::BSString GetDescription() const override { return "An example condition."sv.data(); }
+		RE::BSString GetDescription() const override { return "True if an actor that would affect stealth meter and fulfills conditions sees the actor."sv.data(); }
+		constexpr REL::Version GetRequiredVersion() const override { return { 1, 0, 0 }; }
 
-		// the earliest version of your plugin that provided this condition in its current form
-		constexpr REL::Version GetRequiredVersion() const override { return {1, 0, 0}; }
 
-	protected:
-		// this is the function with the actual condition logic
-		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override;
-	};
 
-	// A more complex example
-	class CompareGraphVariableNiPoint3DotCondition : public CustomCondition
-	{
-	public:
-		constexpr static inline std::string_view CONDITION_NAME = "CompareGraphVariableNiPoint3Dot"sv;
-
-		CompareGraphVariableNiPoint3DotCondition();
-
-		RE::BSString GetName() const override { return CONDITION_NAME.data(); }
-
-		RE::BSString GetDescription() const override
-		{
-			return
-				"A complex example condition - calculates the dot product of a NiPoint3 graph variable value and a given NiPoint3 value and compares it with a given float value."sv
-				.data();
-		}
-
-		// the earliest version of your plugin that provided this condition in its current form
-		constexpr REL::Version GetRequiredVersion() const override { return {1, 0, 0}; }
-
-		// this is displayed in the UI in the right column, next to the condition name
-		RE::BSString GetArgument() const override;
-
-		// this is displayed in the UI below the condition components while there's a target selected - it's supposed to be the current value of whatever the condition is checking
-		RE::BSString GetCurrent(RE::TESObjectREFR* a_refr) const override;
-
-	protected:
-		// this is the function with the actual condition logic
-		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override;
-
-		// these are the components that you added in the constructor, keep raw pointers to them
-		ITextConditionComponent* textComponent;
-		INiPoint3ConditionComponent* niPoint3Component;
+		// Good stuff
+		std::string message;
+		IsDetectedByCondition();
+		//Relationship
+		IBoolConditionComponent* useBoolComponent1;
 		IComparisonConditionComponent* comparisonComponent;
 		INumericConditionComponent* numericComponent;
-
-	private:
-		float GetDotProduct(RE::TESObjectREFR* a_refr) const;
+		//Gender
+		IBoolConditionComponent* useBoolComponent2;
+		IBoolConditionComponent* isFemale;
+		//Faction
+		IBoolConditionComponent* useBoolComponent3;
+		IBoolConditionComponent* notComponent;
+		IFormConditionComponent* factionComponent;
+	protected:
+		bool IsRelationship(RE::TESNPC* base, RE::TESNPC* target, RE::TESObjectREFR* a_refr) const;
+		// this is the function with the actual condition logic
+		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override;
 	};
 }

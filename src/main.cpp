@@ -64,8 +64,7 @@ void InitMessaging()
 			OAR_API::Conditions::GetAPI(OAR_API::Conditions::InterfaceVersion::V2);
 			if (g_oarConditionsInterface)
 			{
-				RegisterCondition<Conditions::ExampleCondition>();
-				RegisterCondition<Conditions::CompareGraphVariableNiPoint3DotCondition>();
+				RegisterCondition<Conditions::IsDetectedByCondition>();
 			}
 			else
 			{

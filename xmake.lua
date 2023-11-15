@@ -2,7 +2,7 @@
 set_xmakever("2.7.8")
 
 -- set project
-set_project("OpenAnimationReplacer-ExamplePlugin")
+set_project("OpenAnimationReplacer-DetectionPlugin")
 set_version("1.0.0")
 set_license("gplv3")
 set_languages("c++20")
@@ -28,15 +28,15 @@ set_policy("package.requires_lock", true)
 add_requires("commonlibsse-ng", { configs = { skyrim_vr = true } })
 
 -- targets
-target("OpenAnimationReplacer-ExamplePlugin")
+target("OpenAnimationReplacer-DetectionPlugin")
     -- add packages to target
     add_packages("fmt", "spdlog", "commonlibsse-ng")
 
     -- add commonlibsse-ng plugin
     add_rules("@commonlibsse-ng/plugin", {
-        name = "OpenAnimationReplacer-ExamplePlugin",
-        author = "Ersh",
-        description = "SKSE64 plugin example utilizing OpenAnimationReplacer's API"
+        name = "OpenAnimationReplacer-DetectionPlugin",
+        author = "Nonameron",
+        description = "SKSE64 plugin adding detection conditions from papyrus extender to OpenAnimationReplacer's API"
     })
 
     -- add src files
@@ -57,9 +57,7 @@ target("OpenAnimationReplacer-ExamplePlugin")
                 end
             end
         end
-        if os.getenv("SKYRIM_MODS_PATH") then
-            copy(os.getenv("SKYRIM_MODS_PATH"), target:name())
-        elseif os.getenv("SKYRIM_PATH") then
-            copy(os.getenv("SKYRIM_PATH"), "Data")
-        end
+        copy("D:/Downloads/Skyrim/Own mods/", "OAR DetectionConditions")
+        copy("D:/Downloads/Skyrim/Mod Organizer 2/mods/", "OpenAnimationReplacer - Detection conditions")
     end)
+
