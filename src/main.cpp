@@ -65,6 +65,7 @@ void InitMessaging()
 			if (g_oarConditionsInterface)
 			{
 				RegisterCondition<Conditions::IsDetectedByCondition>();
+				RegisterCondition<Conditions::DetectsCondition>();
 			}
 			else
 			{
