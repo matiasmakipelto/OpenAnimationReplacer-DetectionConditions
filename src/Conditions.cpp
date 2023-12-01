@@ -90,7 +90,7 @@ namespace Conditions
 			"Use the actorbase condition"));
 		notComponent2 = static_cast<IBoolConditionComponent*>(AddBaseComponent(
 			ConditionComponentType::kBool,
-			"Is NOT"));
+			"Is NOT_2"));
 		actorBaseComponent = static_cast<IFormConditionComponent*>(AddBaseComponent(
 			ConditionComponentType::kForm,
 			"Actor base"));
@@ -101,7 +101,7 @@ namespace Conditions
 			"Use the distance condition"));
 		comparisonComponent2 = static_cast<IComparisonConditionComponent*>(AddBaseComponent(
 			ConditionComponentType::kComparison,
-			"Comparison"));
+			"Comparison_2"));
 		numericComponent2 = static_cast<INumericConditionComponent*>(AddBaseComponent(
 			ConditionComponentType::kNumeric,
 			"Distance (centimeters)"));
@@ -112,10 +112,24 @@ namespace Conditions
 			"Use the keyword condition"));
 		notComponent3 = static_cast<IBoolConditionComponent*>(AddBaseComponent(
 			ConditionComponentType::kBool,
-			"Is NOT"));
+			"Is NOT_3"));
 		keywordComponent = static_cast<IKeywordConditionComponent*>(AddBaseComponent(
 			ConditionComponentType::kKeyword,
 			"Keyword"));
+
+		// Compare value
+		useBoolComponent7 = static_cast<IBoolConditionComponent*>(AddBaseComponent(
+			ConditionComponentType::kBool,
+			"Use the compare value condition"));
+		numericComponent3 = static_cast<INumericConditionComponent*>(AddBaseComponent(
+			ConditionComponentType::kNumeric,
+			"Value A"));
+		comparisonComponent3 = static_cast<IComparisonConditionComponent*>(AddBaseComponent(
+			ConditionComponentType::kComparison,
+			"Comparison_3"));
+		numericComponent4 = static_cast<INumericConditionComponent*>(AddBaseComponent(
+			ConditionComponentType::kNumeric,
+			"Value B"));
 	}
 
 	bool DetectionCondition::IsRelationship(RE::TESNPC* base, RE::TESNPC* target, RE::TESObjectREFR* a_refr) const
@@ -129,8 +143,20 @@ namespace Conditions
 	{
 		// Humanoid
 		if (useBoolComponent->GetBoolValue()) {
-			if (isHuman->GetBoolValue() != target->HasKeywordString("ActorTypeNPC")) {
-				return false;
+			if (isHuman->GetBoolValue()) {
+				if (!target->HasKeywordString("ActorTypeNPC")) {
+					return false;
+				}
+				else {
+					std::string raceEdid = target->GetRace()->GetFormEditorID();
+					if (raceEdid == "ManakinRace") {
+						return false;
+					}
+				}
+			} else {
+				if (target->HasKeywordString("ActorTypeNPC")) {
+					return false;
+				}
 			}
 		}
 
@@ -197,10 +223,15 @@ namespace Conditions
 			}
 		}
 
+		// Compare value
+		if (useBoolComponent7->GetBoolValue() && numericComponent3->IsValid() && numericComponent4->IsValid()) {
+			if (!comparisonComponent3->GetComparisonResult(numericComponent3->GetNumericValue(target), numericComponent4->GetNumericValue(target))) {
+				return false;
+			}
+		}
+
 		return true;
 	};
-
-
 
 
 
@@ -222,7 +253,7 @@ namespace Conditions
 
 			if (a_actor == nullptr)
 				return false;
-
+			
 			if (a_actor->GetActorRuntimeData().currentProcess) {
 				if (const auto processLists = RE::ProcessLists::GetSingleton(); processLists) {
 					bool actorsExist = false;
@@ -262,9 +293,6 @@ namespace Conditions
 
 		return false;
 	}
-
-
-
 
 
 

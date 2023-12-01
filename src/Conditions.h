@@ -34,6 +34,12 @@ namespace Conditions
 			IBoolConditionComponent* useBoolComponent6;
 			IBoolConditionComponent* notComponent3;
 			IKeywordConditionComponent* keywordComponent;
+			//Compare value
+			IBoolConditionComponent* useBoolComponent7;
+			INumericConditionComponent* numericComponent3;
+			IComparisonConditionComponent* comparisonComponent3;
+			INumericConditionComponent* numericComponent4;
+			
 		protected:
 			bool IsRelationship(RE::TESNPC* base, RE::TESNPC* target, RE::TESObjectREFR* a_refr) const;
 			bool FitsConditions(RE::Actor* actor, RE::Actor* target, RE::TESObjectREFR* a_refr) const;
@@ -46,8 +52,8 @@ namespace Conditions
 		// Mandatory stuff
 		constexpr static inline std::string_view CONDITION_NAME = "IsDetectedBy"sv;
 		RE::BSString GetName() const override { return CONDITION_NAME.data(); }
-		RE::BSString GetDescription() const override { return "True if an actor that fulfills the conditions sees the actor."sv.data(); }
-		constexpr REL::Version GetRequiredVersion() const override { return { 1, 2, 0 }; }
+		RE::BSString GetDescription() const override { return "Checks if an actor that fulfills all of the child conditions sees the actor."sv.data(); }
+		constexpr REL::Version GetRequiredVersion() const override { return { 1, 2, 1 }; }
 
 		using DetectionCondition::DetectionCondition;
 
@@ -63,7 +69,7 @@ namespace Conditions
 		constexpr static inline std::string_view CONDITION_NAME = "Detects"sv;
 		RE::BSString GetName() const override { return CONDITION_NAME.data(); }
 		RE::BSString GetDescription() const override { return "True if an actor that fulfills the conditions is visible to the actor."sv.data(); }
-		constexpr REL::Version GetRequiredVersion() const override { return { 1, 2, 0 }; }
+		constexpr REL::Version GetRequiredVersion() const override { return { 1, 2, 1 }; }
 	
 		using DetectionCondition::DetectionCondition;
 
