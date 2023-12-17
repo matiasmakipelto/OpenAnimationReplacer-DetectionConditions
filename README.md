@@ -1,6 +1,6 @@
-# OpenAnimationReplacer-ExamplePlugin
+# OpenAnimationReplacer-DetectionPlugin
 
-This is a SKSE64 plugin example utilizing Open Animation Replacer's API to add a new custom condition.
+This is a SKSE64 plugin adding detection condition to Open Animation Replacer using its API.
 
 ### Requirements
 * [XMake](https://xmake.io) [2.7.8+]
