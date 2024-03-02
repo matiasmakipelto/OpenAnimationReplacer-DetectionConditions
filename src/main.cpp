@@ -64,8 +64,11 @@ void InitMessaging()
 			OAR_API::Conditions::GetAPI(OAR_API::Conditions::InterfaceVersion::V2);
 			if (g_oarConditionsInterface)
 			{
-				RegisterCondition<Conditions::IsDetectedByCondition>();
+				RegisterCondition<Conditions::DetectedByCondition>();
 				RegisterCondition<Conditions::DetectsCondition>();
+				RegisterCondition<Conditions::DetectionDistanceCondition>();
+				RegisterCondition<Conditions::DetectionRelationshipCondition>();
+				RegisterCondition<Conditions::DetectionAngleCondition>();
 			}
 			else
 			{
