@@ -9,7 +9,7 @@ namespace Conditions
 	// Base
 	// 
 	/////////////////////////////////
-	bool DetectionCondition::Evaluate(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, bool isDetectedByCondition) const
+	bool DetectionCondition::Evaluate(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod, bool isDetectedByCondition) const
 	{
 		resultText = "";
 		if (a_refr)
@@ -36,60 +36,7 @@ namespace Conditions
 								if (detector->RequestDetectionLevel(detectee) > 0) {
 									if (multiComponent->IsValid())
 									{
-
-										// Check child conditions
-										bool passedEvaluation = true;
-										multiComponent->ForEachCondition([&passedEvaluation, &a_actor, &target, &a_clipGenerator, &a_refr](auto& childCondition) {
-											
-											// DetectionDistance condition
-											if (childCondition->GetName() == "DetectionDistance")
-											{
-												DetectionDistanceCondition* condition = static_cast<DetectionDistanceCondition*>(childCondition.get());
-												if (condition)
-												{
-													if (condition->CustomEvaluate(a_refr, target.get()) == false)
-													{
-														passedEvaluation = false;
-														return RE::BSVisit::BSVisitControl::kStop;
-													}
-												}
-											}
-											// DetectionRelationship condition
-											else if (childCondition->GetName() == "DetectionRelationship")
-											{
-												DetectionRelationshipCondition* condition = static_cast<DetectionRelationshipCondition*>(childCondition.get());
-												if (condition)
-												{
-													if (condition->CustomEvaluate(a_actor, target.get(), a_refr) == false)
-													{
-														passedEvaluation = false;
-														return RE::BSVisit::BSVisitControl::kStop;
-													}
-												}
-											}
-											// DetectionAngle condition
-											else if (childCondition->GetName() == "DetectionAngle")
-											{
-												DetectionAngleCondition* condition = static_cast<DetectionAngleCondition*>(childCondition.get());
-												if (condition)
-												{
-													if (condition->CustomEvaluate(a_actor, target.get(), a_refr) == false)
-													{
-														passedEvaluation = false;
-														return RE::BSVisit::BSVisitControl::kStop;
-													}
-												}
-											}
-											// Normal conditions
-											else if (childCondition->Evaluate(target->As<RE::TESObjectREFR>(), a_clipGenerator) == false)
-											{
-												passedEvaluation = false;
-												return RE::BSVisit::BSVisitControl::kStop;
-											}
-
-											return RE::BSVisit::BSVisitControl::kContinue;
-										});
-
+										bool passedEvaluation = CheckMultiCondition(a_actor, target.get(), a_refr, a_clipGenerator, a_parentSubMod);
 
 										if (passedEvaluation)
 										{
@@ -118,71 +65,7 @@ namespace Conditions
 							if (detector->RequestDetectionLevel(detectee) > 0) {
 								if (multiComponent->IsValid())
 								{
-
-
-
-
-
-
-									bool passedEvaluation = true;
-
-									// Check child conditions
-									multiComponent->ForEachCondition([&passedEvaluation, &a_actor, &playerActor, &a_clipGenerator, &a_refr](auto& childCondition) {
-
-										// DetectionDistance condition
-										if (childCondition->GetName() == "DetectionDistance")
-										{
-											DetectionDistanceCondition* condition = static_cast<DetectionDistanceCondition*>(childCondition.get());
-											if (condition)
-											{
-												if (condition->CustomEvaluate(a_refr, playerActor) == false)
-												{
-													passedEvaluation = false;
-													return RE::BSVisit::BSVisitControl::kStop;
-												}
-											}
-										}
-										// DetectionRelationship condition
-										else if (childCondition->GetName() == "DetectionRelationship")
-										{
-											DetectionRelationshipCondition* condition = static_cast<DetectionRelationshipCondition*>(childCondition.get());
-											if (condition)
-											{
-												if (condition->CustomEvaluate(a_actor, playerActor, a_refr) == false)
-												{
-													passedEvaluation = false;
-													return RE::BSVisit::BSVisitControl::kStop;
-												}
-											}
-										}
-										// DetectionAngle condition
-										else if (childCondition->GetName() == "DetectionAngle")
-										{
-											DetectionAngleCondition* condition = static_cast<DetectionAngleCondition*>(childCondition.get());
-											if (condition)
-											{
-												if (condition->CustomEvaluate(a_actor, playerActor, a_refr) == false)
-												{
-													passedEvaluation = false;
-													return RE::BSVisit::BSVisitControl::kStop;
-												}
-											}
-										}
-										// Normal conditions
-										else if (childCondition->Evaluate(playerActor->As<RE::TESObjectREFR>(), a_clipGenerator) == false)
-										{
-											passedEvaluation = false;
-											return RE::BSVisit::BSVisitControl::kStop;
-										}
-
-										return RE::BSVisit::BSVisitControl::kContinue;
-										});
-
-
-
-
-
-
+									bool passedEvaluation = CheckMultiCondition(a_actor, playerActor, a_refr, a_clipGenerator, a_parentSubMod);
 
 									if (passedEvaluation)
 									{
@@ -202,6 +85,64 @@ namespace Conditions
 		}
 
 		return false;
+	}
+
+	bool DetectionCondition::CheckMultiCondition(RE::Actor* actor, RE::Actor* target, RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod) const
+	{
+		// Check child conditions
+		bool passedEvaluation = true;
+		multiComponent->ForEachCondition([&passedEvaluation, &actor, &target, &a_refr, &a_clipGenerator, &a_parentSubMod](auto& childCondition) {
+
+			// DetectionDistance condition
+			if (childCondition->GetName() == "DetectionDistance")
+			{
+				DetectionDistanceCondition* condition = static_cast<DetectionDistanceCondition*>(childCondition.get());
+				if (condition)
+				{
+					if (condition->CustomEvaluate(a_refr, target) == false)
+					{
+						passedEvaluation = false;
+						return RE::BSVisit::BSVisitControl::kStop;
+					}
+				}
+			}
+			// DetectionRelationship condition
+			else if (childCondition->GetName() == "DetectionRelationship")
+			{
+				DetectionRelationshipCondition* condition = static_cast<DetectionRelationshipCondition*>(childCondition.get());
+				if (condition)
+				{
+					if (condition->CustomEvaluate(actor, target, a_refr) == false)
+					{
+						passedEvaluation = false;
+						return RE::BSVisit::BSVisitControl::kStop;
+					}
+				}
+			}
+			// DetectionAngle condition
+			else if (childCondition->GetName() == "DetectionAngle")
+			{
+				DetectionAngleCondition* condition = static_cast<DetectionAngleCondition*>(childCondition.get());
+				if (condition)
+				{
+					if (condition->CustomEvaluate(actor, target, a_refr) == false)
+					{
+						passedEvaluation = false;
+						return RE::BSVisit::BSVisitControl::kStop;
+					}
+				}
+			}
+			// Normal conditions
+			else if (childCondition->Evaluate(target->As<RE::TESObjectREFR>(), a_clipGenerator, a_parentSubMod) == false)
+			{
+				passedEvaluation = false;
+				return RE::BSVisit::BSVisitControl::kStop;
+			}
+
+			return RE::BSVisit::BSVisitControl::kContinue;
+			});
+
+		return passedEvaluation;
 	}
 
 	bool DetectionCondition::ValidateTarget(RE::Actor* actor, RE::Actor* target) const
@@ -242,7 +183,7 @@ namespace Conditions
 	// Detection distance
 	// 
 	/////////////////////////////////
-	bool DetectionDistanceCondition::EvaluateImpl([[maybe_unused]] RE::TESObjectREFR* a_refr, [[maybe_unused]] RE::hkbClipGenerator* a_clipGenerator) const
+	bool DetectionDistanceCondition::EvaluateImpl([[maybe_unused]] RE::TESObjectREFR* a_refr, [[maybe_unused]] RE::hkbClipGenerator* a_clipGenerator, [[maybe_unused]] void* a_parentSubMod) const
 	{
 		// This should only be used inside a detection condition
 		return false;
@@ -282,7 +223,7 @@ namespace Conditions
 	}
 	
 
-	bool DetectionRelationshipCondition::EvaluateImpl([[maybe_unused]] RE::TESObjectREFR* a_refr, [[maybe_unused]] RE::hkbClipGenerator* a_clipGenerator) const
+	bool DetectionRelationshipCondition::EvaluateImpl([[maybe_unused]] RE::TESObjectREFR* a_refr, [[maybe_unused]] RE::hkbClipGenerator* a_clipGenerator, [[maybe_unused]] void* a_parentSubMod) const
 	{
 		// This should only be used inside a detection condition
 		return false;
@@ -304,7 +245,7 @@ namespace Conditions
 	// Detection angle
 	// 
 	/////////////////////////////////
-	bool DetectionAngleCondition::EvaluateImpl([[maybe_unused]] RE::TESObjectREFR* a_refr, [[maybe_unused]] RE::hkbClipGenerator* a_clipGenerator) const
+	bool DetectionAngleCondition::EvaluateImpl([[maybe_unused]] RE::TESObjectREFR* a_refr, [[maybe_unused]] RE::hkbClipGenerator* a_clipGenerator, [[maybe_unused]] void* a_parentSubMod) const
 	{
 		// This should only be used inside a detection condition
 		return false;
@@ -312,10 +253,14 @@ namespace Conditions
 
 	bool DetectionAngleCondition::CustomEvaluate(RE::Actor* actor, RE::Actor* target, RE::TESObjectREFR* a_refr)
 	{
-		float actorAngle = actor->GetAngleZ() / ((float)std::numbers::pi) * 180;
+		bool swapActors = booleanComponent->GetBoolValue();
+		RE::Actor* angleActor = swapActors ? target : actor;
+		RE::Actor* targetActor = swapActors ? actor : target;
 
-		RE::NiPoint3 targetPos = target->GetPosition();
-		RE::NiPoint3 actorPos = actor->GetPosition();
+		float actorAngle = angleActor->GetAngleZ() / ((float)std::numbers::pi) * 180;
+
+		RE::NiPoint3 targetPos = targetActor->GetPosition();
+		RE::NiPoint3 actorPos = angleActor->GetPosition();
 		RE::NiPoint2 unitVectorToTarget = RE::NiPoint2((targetPos - actorPos).x, (targetPos - actorPos).y);
 		unitVectorToTarget = unitVectorToTarget / unitVectorToTarget.Length();
 		float angleToTarget = std::atan2(unitVectorToTarget.x, unitVectorToTarget.y) / ((float)std::numbers::pi) * 180;

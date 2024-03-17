@@ -18,9 +18,10 @@ namespace Conditions
 			multiComponent->SetShouldDrawEvaluateResultForChildConditions(false);
 		};
 		RE::BSString GetCurrent(RE::TESObjectREFR*) const override { return resultText; };
-		bool Evaluate(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, bool isDetectedByCondition) const;
+		bool Evaluate(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod, bool isDetectedByCondition) const;
 		bool ValidateTarget(RE::Actor* actor, RE::Actor* target) const;
 
+		bool CheckMultiCondition(RE::Actor* actor, RE::Actor* target, RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod) const;
 		mutable RE::BSString resultText = "";
 	};
 
@@ -34,7 +35,7 @@ namespace Conditions
 		constexpr REL::Version GetRequiredVersion() const override { return { 2, 0, 0 }; }
 
 	protected:
-		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override { return Evaluate(a_refr, a_clipGenerator, true); };
+		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod) const override { return Evaluate(a_refr, a_clipGenerator, a_parentSubMod, true); };
 	};
 
 	class DetectsCondition : public DetectionCondition
@@ -47,7 +48,7 @@ namespace Conditions
 		constexpr REL::Version GetRequiredVersion() const override { return { 2, 0, 0 }; }
 
 	protected:
-		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override { return Evaluate(a_refr, a_clipGenerator, false); };
+		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod) const override { return Evaluate(a_refr, a_clipGenerator, a_parentSubMod, false); };
 	};
 
 
@@ -79,7 +80,7 @@ namespace Conditions
 		bool CustomEvaluate(RE::TESObjectREFR* actor, const RE::Actor* target);
 
 	protected:
-		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override;
+		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod) const override;
 	};
 
 
@@ -110,7 +111,7 @@ namespace Conditions
 		bool CustomEvaluate(RE::Actor* actor, RE::Actor* target, RE::TESObjectREFR* a_refr);
 	
 	protected:
-		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override;
+		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod) const override;
 	};
 	
 
@@ -120,10 +121,15 @@ namespace Conditions
 	class DetectionAngleCondition : public CustomCondition
 	{
 	public:
+		IBoolConditionComponent* booleanComponent;
 		IComparisonConditionComponent* comparisonComponent;
 		INumericConditionComponent* numericComponent;
 		DetectionAngleCondition()
 		{
+			booleanComponent = static_cast<IBoolConditionComponent*>(AddBaseComponent(
+				ConditionComponentType::kBool,
+				"Swap actor",
+				"When false, the angle is from the actor being evaluated. When true, the angle is from the actor being detected in the case of DETECTS, or from the actor detecting in the case of DETECTED_BY."));
 			comparisonComponent = static_cast<IComparisonConditionComponent*>(AddBaseComponent(
 				ConditionComponentType::kComparison,
 				"Comparison"));
@@ -136,11 +142,11 @@ namespace Conditions
 		constexpr static inline std::string_view CONDITION_NAME = "DetectionAngle"sv;
 		RE::BSString GetName() const override { return CONDITION_NAME.data(); }
 		RE::BSString GetDescription() const override { return "True if angle from actor to target meets the condition. Only usable with detection conditions."sv.data(); }
-		constexpr REL::Version GetRequiredVersion() const override { return { 2, 0, 0 }; }
+		constexpr REL::Version GetRequiredVersion() const override { return { 2, 0, 1 }; }
 	
 		bool CustomEvaluate(RE::Actor* actor, RE::Actor* target, RE::TESObjectREFR* a_refr);
 
 	protected:
-		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator) const override;
+		bool EvaluateImpl(RE::TESObjectREFR* a_refr, RE::hkbClipGenerator* a_clipGenerator, void* a_parentSubMod) const override;
 	};
 }
