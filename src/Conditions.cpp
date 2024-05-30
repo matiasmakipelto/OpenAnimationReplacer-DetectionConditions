@@ -18,7 +18,11 @@ namespace Conditions
 
 			if (a_actor == nullptr)
 				return false;
+			if (!multiComponent->IsValid())
+				return false;
 			
+			std::vector<RE::Actor*> detectors;
+
 			if (a_actor->GetActorRuntimeData().currentProcess) {
 				if (const auto processLists = RE::ProcessLists::GetSingleton(); processLists) {
 					bool actorsExist = false;
@@ -33,22 +37,8 @@ namespace Conditions
 								RE::Actor* detector = isDetectedByCondition ? target.get() : a_actor;
 								RE::Actor* detectee = isDetectedByCondition ? a_actor : target.get();
 								
-								if (detector->RequestDetectionLevel(detectee) > 0) {
-									if (multiComponent->IsValid())
-									{
-										bool passedEvaluation = CheckMultiCondition(a_actor, target.get(), a_refr, a_clipGenerator, a_parentSubMod);
-
-										if (passedEvaluation)
-										{
-											if (target.get()->GetName())
-											{
-												resultText = target.get()->GetName();
-											}
-
-											return true;
-										}
-									}
-								}
+								if (detector->RequestDetectionLevel(detectee) > 0)
+									detectors.push_back(target.get());
 							}
 						}
 					}
@@ -63,20 +53,33 @@ namespace Conditions
 							RE::Actor* detectee = isDetectedByCondition ? a_actor : playerActor;
 
 							if (detector->RequestDetectionLevel(detectee) > 0) {
-								if (multiComponent->IsValid())
+								detectors.push_back(playerActor);
+							}
+						}
+					}
+
+					if (detectors.size() > 0)
+					{
+						// Sorting is actually simply useless. The only difference would be in resultText
+						// 
+						//RE::NiPoint3 a_actor_pos = a_actor->GetPosition();
+						//std::sort(detectors.begin(), detectors.end(), [&a_actor_pos](const auto& a, const auto& b)
+						//	{
+						//		return a->GetPosition().GetSquaredDistance(a_actor_pos) < b->GetPosition().GetSquaredDistance(a_actor_pos);
+						//	});
+
+						for (const auto& target : detectors)
+						{
+							bool passedEvaluation = CheckMultiCondition(a_actor, target, a_refr, a_clipGenerator, a_parentSubMod);
+
+							if (passedEvaluation)
+							{
+								if (target->GetName())
 								{
-									bool passedEvaluation = CheckMultiCondition(a_actor, playerActor, a_refr, a_clipGenerator, a_parentSubMod);
-
-									if (passedEvaluation)
-									{
-										if (playerActor->GetName())
-										{
-											resultText = playerActor->GetName();
-										}
-
-										return true;
-									}
+									resultText = target->GetName();
 								}
+
+								return true;
 							}
 						}
 					}
@@ -266,8 +269,24 @@ namespace Conditions
 		float angleToTarget = std::atan2(unitVectorToTarget.x, unitVectorToTarget.y) / ((float)std::numbers::pi) * 180;
 		angleToTarget = angleToTarget < 0 ? angleToTarget + 360 : angleToTarget;
 
+		if (std::fabs(actorAngle - angleToTarget) > 180) // different phases
+		{
+			if (actorAngle < angleToTarget)
+				actorAngle += 360;
+			else
+				angleToTarget += 360;
+		}
+
+		bool targetOnRight = actorAngle - angleToTarget < 0;
+
 		float relativeAngleToTarget = std::fabs(actorAngle - angleToTarget);
 		relativeAngleToTarget = relativeAngleToTarget > 180 ? 360 - relativeAngleToTarget : relativeAngleToTarget;
+		if (rightBooleanComponent->GetBoolValue())
+			if (!targetOnRight)
+				return false;
+		if (leftBooleanComponent->GetBoolValue())
+			if (targetOnRight)
+				return false;
 
 		return comparisonComponent->GetComparisonResult(relativeAngleToTarget, numericComponent->GetNumericValue(a_refr));
 	}

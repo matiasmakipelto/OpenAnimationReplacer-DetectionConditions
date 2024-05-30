@@ -124,6 +124,8 @@ namespace Conditions
 		IBoolConditionComponent* booleanComponent;
 		IComparisonConditionComponent* comparisonComponent;
 		INumericConditionComponent* numericComponent;
+		IBoolConditionComponent* rightBooleanComponent;
+		IBoolConditionComponent* leftBooleanComponent;
 		DetectionAngleCondition()
 		{
 			booleanComponent = static_cast<IBoolConditionComponent*>(AddBaseComponent(
@@ -137,12 +139,20 @@ namespace Conditions
 				ConditionComponentType::kNumeric,
 				"Angle in degrees",
 				"Absolute angle from the direction an actor is facing."));
+			rightBooleanComponent = static_cast<IBoolConditionComponent*>(AddBaseComponent(
+				ConditionComponentType::kBool,
+				"Limit detection to right side",
+				"Only trigger when an actor is detected on the right side of the detecting actor."));
+			leftBooleanComponent = static_cast<IBoolConditionComponent*>(AddBaseComponent(
+				ConditionComponentType::kBool,
+				"Limit detection to left side",
+				"Only trigger when an actor is detected on the left side of the detecting actor."));
 		}
 
 		constexpr static inline std::string_view CONDITION_NAME = "DetectionAngle"sv;
 		RE::BSString GetName() const override { return CONDITION_NAME.data(); }
 		RE::BSString GetDescription() const override { return "True if angle from actor to target meets the condition. Only usable with detection conditions."sv.data(); }
-		constexpr REL::Version GetRequiredVersion() const override { return { 2, 0, 1 }; }
+		constexpr REL::Version GetRequiredVersion() const override { return { 2, 0, 3 }; }
 	
 		bool CustomEvaluate(RE::Actor* actor, RE::Actor* target, RE::TESObjectREFR* a_refr);
 
