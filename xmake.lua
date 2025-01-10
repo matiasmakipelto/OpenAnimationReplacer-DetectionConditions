@@ -3,7 +3,7 @@ set_xmakever("2.7.8")
 
 -- set project
 set_project("OpenAnimationReplacer-DetectionPlugin")
-set_version("2.1.1")
+set_version("2.1.2")
 set_license("gplv3")
 set_languages("c++20")
 set_optimize("faster")

@@ -47,13 +47,16 @@ namespace Conditions
 						// The loop doesn't trigger for player. Thus, check player separately
 						const RE::FormID playerRefId = 0x14;
 						const auto playerRef = RE::TESForm::LookupByID(playerRefId);
-						const auto playerActor = playerRef->As<RE::Actor>();
-						if (ValidateTarget(a_actor, playerActor)) {
-							RE::Actor* detector = isDetectedByCondition ? playerActor : a_actor;
-							RE::Actor* detectee = isDetectedByCondition ? a_actor : playerActor;
+						if (playerRef)
+						{
+							const auto playerActor = playerRef->As<RE::Actor>();
+							if (ValidateTarget(a_actor, playerActor)) {
+								RE::Actor* detector = isDetectedByCondition ? playerActor : a_actor;
+								RE::Actor* detectee = isDetectedByCondition ? a_actor : playerActor;
 
-							if (detector->RequestDetectionLevel(detectee) > 0) {
-								detectors.push_back(playerActor);
+								if (detector->RequestDetectionLevel(detectee) > 0) {
+									detectors.push_back(playerActor);
+								}
 							}
 						}
 					}
