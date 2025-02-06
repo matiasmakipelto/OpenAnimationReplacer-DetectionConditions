@@ -6,9 +6,9 @@ namespace Conditions
 	class IConditionComponent;
 	class IStateData;
 
-	using ConditionFactory = ICondition * (*)();
-	using ConditionComponentFactory = IConditionComponent * (*)(const ICondition* a_parentCondition, const char* a_name, const char* a_description);
-	using ConditionStateDataFactory = IStateData * (*)();
+	using ConditionFactory = ICondition* (*)();
+	using ConditionComponentFactory = IConditionComponent* (*)(const ICondition* a_parentCondition, const char* a_name, const char* a_description);
+	using ConditionStateDataFactory = IStateData* (*)();
 
 	enum class ConditionComponentType : uint8_t
 	{

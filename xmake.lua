@@ -1,39 +1,32 @@
 -- set minimum xmake version
-set_xmakever("2.7.8")
+set_xmakever("2.8.2")
+
+-- includes
+includes ("lib/commonlibsse-ng")
 
 -- set project
 set_project("OpenAnimationReplacer-DetectionPlugin")
 set_version("2.1.2")
-set_license("gplv3")
-set_languages("c++20")
-set_optimize("faster")
-set_warnings("allextra", "error")
-
--- set allowed
-set_allowedarchs("windows|x64")
-set_allowedmodes("debug", "releasedbg")
+set_license("GPL-3.0")
 
 -- set defaults
-set_defaultarchs("windows|x64")
-set_defaultmode("releasedbg")
+set_languages("c++23")
+set_warnings("allextra")
+
+-- set policies
+set_policy("package.requires_lock", true)
 
 -- add rules
 add_rules("mode.debug", "mode.releasedbg")
 add_rules("plugin.vsxmake.autoupdate")
 
--- set policies
-set_policy("package.requires_lock", true)
-
--- require packages
-add_requires("commonlibsse-ng", { configs = { skyrim_vr = true } })
-
 -- targets
 target("OpenAnimationReplacer-DetectionPlugin")
-    -- add packages to target
-    add_packages("fmt", "spdlog", "commonlibsse-ng")
+    -- add dependencies to target
+    add_deps("commonlibsse-ng")
 
     -- add commonlibsse-ng plugin
-    add_rules("@commonlibsse-ng/plugin", {
+    add_rules("commonlibsse-ng.plugin", {
         name = "OpenAnimationReplacer-DetectionPlugin",
         author = "Nonameron",
         description = "SKSE64 plugin adding detection conditions from papyrus extender to OpenAnimationReplacer's API"
